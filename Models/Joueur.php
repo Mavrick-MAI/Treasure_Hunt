@@ -62,5 +62,57 @@
             $this->positionY = $pPositionY;
         }
 
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Le Joueur gagne des points d'expérience équivalent à la force de l'ennemi vaincu.
+		 */ 
+        public function gagneExperience(int $pPointExperience) {
+            $this->pointExperience += $pPointExperience;
+            echo "Le Monstre a été vaincu.<br>";
+            echo "Le Joueur possède ".$this->pointExperience. " points d'expérience.<br>";
+        }
+
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Le Joueur se déplace d'une case à droite.
+		 */ 
+        public function seDeplacerDroite() {
+            $this->positionX++;
+        }
+
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Le Joueur se déplace d'une case  à gauche.
+		 */ 
+        public function seDeplacerGauche() {
+            $this->positionX--;
+        }
+
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Le Joueur se déplace d'une case  en haut.
+		 */ 
+        public function seDeplacerHaut() {
+            $this->positionY++;
+        }
+
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Le Joueur se déplace d'une case  en bas.
+		 */ 
+        public function seDeplacerBas() {
+            $this->positionY--;
+        }
+
     }
 ?>
