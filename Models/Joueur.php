@@ -5,14 +5,9 @@
     class Joueur extends Personnage {
 
 		/**
-         * La position X
+         * La position
 		 */ 
-        protected int $positionX;
-
-		/**
-         * La position Y
-		 */ 
-        protected int $positionY;
+        protected array $position;
 
 		/**
 		 * @return Joueur
@@ -20,46 +15,25 @@
         public function __construct(int $pPointVie, int $pForce) {
             
 			parent::__construct($pPointVie, $pForce);
-            $this->positionX = 0;
-            $this->positionY = 0;
         }
 
         /**
-		 * @return int
+		 * @return array
          * 
-         * Retourne la position X
+         * Retourne la position
 		 */ 
-        public function getPositionX(): int {
-            return $this->positionX;
+        public function getPosition(): array {
+            return $this->position;
         }
 
 		/**
-		 * @param int
+		 * @param array
 		 * @return void
          * 
-         * Modifie la position X
+         * Modifie la position
 		 */ 
-        public function setPositionX(int $pPositionX) {
-            $this->positionX = $pPositionX;
-        }
-
-        /**
-		 * @return int
-         * 
-         * Retourne la position Y
-		 */ 
-        public function getPositionY(): int {
-            return $this->positionY;
-        }
-
-		/**
-		 * @param int
-		 * @return void
-         * 
-         * Modifie la position Y
-		 */ 
-        public function setPositionY(int $pPositionY) {
-            $this->positionY = $pPositionY;
+        public function setPosition(array $pPosition) {
+            $this->position = $pPosition;
         }
 
 		/**
@@ -75,43 +49,39 @@
         }
 
 		/**
-		 * @param int
 		 * @return void
          * 
          * Le Joueur se déplace d'une case à droite.
 		 */ 
         public function seDeplacerDroite() {
-            $this->positionX++;
+            $this->position['x']++;
         }
 
 		/**
-		 * @param int
 		 * @return void
          * 
-         * Le Joueur se déplace d'une case  à gauche.
+         * Le Joueur se déplace d'une case à gauche.
 		 */ 
         public function seDeplacerGauche() {
-            $this->positionX--;
+            $this->position['x']--;
         }
 
 		/**
-		 * @param int
 		 * @return void
          * 
-         * Le Joueur se déplace d'une case  en haut.
+         * Le Joueur se déplace d'une case en haut.
 		 */ 
         public function seDeplacerHaut() {
-            $this->positionY++;
+            $this->position['y']++;
         }
 
 		/**
-		 * @param int
 		 * @return void
          * 
-         * Le Joueur se déplace d'une case  en bas.
+         * Le Joueur se déplace d'une case en bas.
 		 */ 
         public function seDeplacerBas() {
-            $this->positionY--;
+            $this->position['y']--;
         }
 
     }
