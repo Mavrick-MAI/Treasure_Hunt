@@ -1,93 +1,138 @@
 <?php
 require_once 'Monstre.php';
-require_once 'Joueur.php';
 
-class carte {
+class Carte {
 
-    protected $tableSize ;
+    protected int $mapSize;
 
+    protected array $treasurePosition;
    
-    protected $occupedPositions= array();
-
-    //Creer le tableau
-    protected $map;
+    protected array $monsterPositions; 
 
     public function __construct() {
-        $tableSize= rand(10,20);
-        $map = array();
-        for ($i = 0; $i < $tableSize; $i++) {
-            $ligne = array();
-            for ($j = 0; $j < $tableSize; $j++) {
-                $ligne[] = array('x' => $i, 'y' => $j);
-            }
-            $map[] = $ligne;
-        }
+        $this->mapSize = rand(10,20);
+        $this->monsterPositions = array();
     }
-    
 
+    /**
+     * @return int
+     * 
+     * Retourne la taille
+     */ 
+    public function getMapSize(): int {
+        return $this->mapSize;
+    }
 
+    /**
+     * @param int
+     * @return void
+     * 
+     * Modifie la taille
+     */ 
+    public function setMapSize(int $pMapSize) {
+        $this->mapSize = $pMapSize;
+    }
 
+    /**
+     * @return array
+     * 
+     * Retourne la position du trésor
+     */ 
+    public function getTreasurePosition(): array {
+        return $this->treasurePosition;
+    }
 
+    /**
+     * @param array
+     * @return void
+     * 
+     * Modifie la position du trésor
+     */ 
+    public function setTreasurePosition(array $pTreasurePosition) {
+        $this->treasurePosition = $pTreasurePosition;
+    }
+
+    /**
+     * @return array
+     * 
+     * Retourne le tableau des positions des monstres
+     */ 
+    public function getMonsterPositions(): array {
+        return $this->monsterPositions;
+    }
+
+    /**
+     * @param array
+     * @return void
+     * 
+     * Modifie le tableau des positions des monstres
+     */ 
+    public function setMonsterPositions(array $pMonstrePositions) {
+        $this->monsterPositions = $pMonstrePositions;
+    }
+
+    /**
+     * @param int
+     * @return void
+     * 
+     * Génére les différentes entités sur la carte (hormis le Joueur)
+     */ 
     function generateEntities($nbMonstre){
 
-        //Generer la position du trésor 
-        $treasurePosition = array([rand($tableSize)],[rand($tableSize)]);
-        array_push($occupedPositions , $treasurePosition);
+        // Genere la position du trésor 
+        $this->treasurePosition = array('x' => rand(0, $this->mapSize - 1),'y' => rand(0, $this->mapSize - 1));
 
-        //Generer les monstres
-        for ($i = 0 ; $i<$nbMonsters;$i++){
-            $thisMonster = new Monstre();
-            $thisMonsterPosition = array([rand($tableSize)],[rand($tableSize)]);
-            while (in_array($thisMonsterPosition , $occupedPositions)){
-                $thisMonsterPosition = array([rand($tableSize)],[rand($tableSize)]);
-            }
-            array_push($occupedPositions , $thisMonsterPosition);
+        //Genere les positions des monstres
+        for ($i = 0 ; $i < $nbMonstre; $i++){
+            // Boucle jusqu'à générer une position aléatoire libre
+            do {
+                $thisMonsterPosition = array('x' => rand(0, $this->mapSize - 1),'y' => rand(0, $this->mapSize - 1));
+            } while ($thisMonsterPosition == $this->treasurePosition || in_array($thisMonsterPosition, $this->monsterPositions));
+            // Insère la position dans le tableau des positions des monstres
+            array_push($this->monsterPositions , $thisMonsterPosition);
         }
-
-        //Genere le joueur
-        $thisGamer = new Joueur();
-        $thisGamerPosition = array([rand($tableSize),rand($tableSize)]);
-        while (in_array($thisGamerPosition , $occupedPositions)){
-            $thisGamerPosition = array([rand($tableSize),rand($tableSize)]);   
-        }
-        array_push($occupedPositions , $thisGamerPosition);
     }
 
-
-    //La position est occupé par un monstre ?
-    function isOccupedByMonsters(){
-        if($thisGamerPosition !== $treasurePosition && in_array($thisGamerPosition,$occupedPositions)){
-            new combat ();
-            $thisGamerPosition([getPositionX],[getPositionY]);
+    /**
+     * @param array
+     * @return boolean
+     * 
+     * Vérifie si la case est occupée par un monstre
+     */ 
+    function isOccupedByMonster(array $playerPosition) {
+        if($playerPosition !== $this->treasurePosition && in_array($playerPosition, $this->monsterPositions)) {
+            // new combat ();
             echo "case occupée, le combat commence";
         }
         else{
             echo "case vide, vous avez avancé";
-            $thisGamerPosition([getPositionX],[getPositionY]);
         }
     }
 
-
-    //La position est occupé par le trésor ?    
-    function isOccupedByTreasure(){
-        if($thisGamerPosition == $treasurePosition){
+    /**
+     * @param array
+     * @return boolean
+     * 
+     * Vérifie si la case est occupée par le trésor
+     */   
+    function isOccupedByTreasure(array $playerPosition) {
+        if($playerPosition == $this->treasurePosition){
             echo "GG YA WIN !!!";
-            $thisGamerPosition([getPositionX],[getPositionY]);
         }
         else{
             echo "case vide, vous avez avancé";
-            $thisGamerPosition([getPositionX],[getPositionY]);
         }
     }
 
-
-    //La position est occupé ?
-    function isOccuped(){
-        $thisGamerPosition([getPositionX],[getPositionY]);
-        $lastIndex = array_key_last ( $occupedPositions );
-        $occupedPositions[$lastIndex] = $thisGamerPosition;
-        isOccupedByTreasure();
-        isOccupedByMonsters();
+    /**
+     * @param array
+     * @return boolean
+     * 
+     * Vérifie si la case est occupée par une entité
+     */ 
+    function isOccuped(array $playerPosition) {
+        $this->isOccupedByTreasure($playerPosition);
+        $this->isOccupedByMonster($playerPosition);
     }
 }
 
