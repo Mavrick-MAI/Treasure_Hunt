@@ -83,5 +83,11 @@
             $this->pointExperience = $pPointExperience;
         }
 
+        public function prendUnCoup(int $pForceEnnemi) {
+            $this->pointVie -= $pForceEnnemi;
+            echo "Le ".get_class($this)." a subi ".$pForceEnnemi. " dégâts.<br>";
+            echo "Le ".get_class($this)." a ".$this->pointVie." points de vie restants.<br>";
+        }
+
     }
 ?>
