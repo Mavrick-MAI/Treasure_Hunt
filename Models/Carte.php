@@ -92,48 +92,6 @@ class Carte {
             array_push($this->monsterPositions , $thisMonsterPosition);
         }
     }
-
-    /**
-     * @param array
-     * @return boolean
-     * 
-     * Vérifie si la case est occupée par un monstre
-     */ 
-    function isOccupedByMonster(array $playerPosition) {
-        if($playerPosition !== $this->treasurePosition && in_array($playerPosition, $this->monsterPositions)) {
-            // new combat ();
-            echo "case occupée, le combat commence";
-        }
-        else{
-            echo "case vide, vous avez avancé";
-        }
-    }
-
-    /**
-     * @param array
-     * @return boolean
-     * 
-     * Vérifie si la case est occupée par le trésor
-     */   
-    function isOccupedByTreasure(array $playerPosition) {
-        if($playerPosition == $this->treasurePosition){
-            echo "GG YA WIN !!!";
-        }
-        else{
-            echo "case vide, vous avez avancé";
-        }
-    }
-
-    /**
-     * @param array
-     * @return boolean
-     * 
-     * Vérifie si la case est occupée par une entité
-     */ 
-    function isOccuped(array $playerPosition) {
-        $this->isOccupedByTreasure($playerPosition);
-        $this->isOccupedByMonster($playerPosition);
-    }
 }
 
 ?>
