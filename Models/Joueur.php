@@ -50,9 +50,14 @@
          * Le Joueur gagne des points d'expérience équivalent à la force de l'ennemi vaincu.
 		 */ 
         public function gagneExperience(int $pPointExperience) {
+
+            $resultat = "";
+
             $this->pointExperience += $pPointExperience;
-            echo "Le Monstre a été vaincu.<br>";
-            echo "Le Joueur possède ".$this->pointExperience. " points d'expérience.<br>";
+            $resultat .= "<p>Le Monstre a été vaincu.<br>";
+            $resultat .= "Le Joueur possède ".$this->pointExperience. " points d'expérience.</p>";
+
+            return $resultat;
         }
 
 		/**
@@ -100,7 +105,7 @@
 
             $resultat = "";
             
-            $resultat .= "Vous avez rencontré un monstre. Un combat commence.<br>";
+            $resultat .= "<p>Vous avez rencontré un monstre. Un combat commence.<br>";
             // Combat tant que le joueur et le monstre sont en vie
             while ($this->pointVie > 0 && $pMonstre->getPointVie() > 0) {
                 // Le monstre subi un coup du joueur
@@ -115,16 +120,16 @@
             // Résultat du combat
             if ($this->pointVie <= 0) {
                 // Cas de la défaite du joueur
-                $resultat .=  "Défaite ! Vous êtes mort !<br>";
+                $resultat .=  "<p class='text-danger'>Défaite ! Vous êtes mort !</p>";
             } else {
                 // Cas de la victoire du joueur
-                $resultat .= "Victoire ! Vous avez vaincu le monstre !<br>";
+                $resultat .= "<p class='text-success'>Victoire ! Vous avez vaincu le monstre !</p>";
                 // Remet les points de vie du joueur au maximum
                 $this->pointVie = self::MAX_VIE;
                 // Le joueur de l'expérience selon la force du monstre vaincu
-                $this->gagneExperience($pMonstre->getForce());
+                $resultat .= $this->gagneExperience($pMonstre->getForce());
             }
-
+            $resultat .= "</p>";
             return $resultat;
         }
 

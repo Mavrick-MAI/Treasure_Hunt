@@ -6,19 +6,16 @@
 
     session_start();
 
-    // reception requête AJAX suite à un click sur une case
+    // reception requête AJAX
     if (isset($_GET['function']) && function_exists($_GET['function'])) {
         if (isset($_GET['direction'])) {
+            // cas où il s'agit d'un déplacement du joueur
             call_user_func($_GET['function'], $_GET['direction']);
         } else {
+            // cas d'un lancement d'une partie
             call_user_func($_GET['function']);
         }
         unset($_GET['function']);
-    }
-
-    // reception requête AJAX suite à un click sur une case
-    if (isset($_GET['function']) && function_exists($_GET['function']) && isset($_GET['position'])) {
-        call_user_func($_GET['function'], $_GET['position']);
     }
 
     /**
@@ -26,6 +23,7 @@
      */
     function startGame() {
 
+        // réinitialise les variables globales
         if (isset($_SESSION['map'])) {
             unset($_SESSION['map']);
             unset($_SESSION['joueur']);
@@ -53,7 +51,7 @@
 
         $_SESSION['map'] = $map;
         $_SESSION['joueur'] = $joueur;
-        $_SESSION['informations'] = "Début de la chasse !!<br>Vous vous trouvez en [".$playerPos['x'].", ".$playerPos['y']."].<br>";
+        $_SESSION['informations'] = "<p>Début de la chasse !!<br>Vous vous trouvez en [".$playerPos['x'].", ".$playerPos['y']."].</p>";
 
     }
 
@@ -64,11 +62,17 @@
      */
     function deplacerJoueur(string $pDirection) {
 
-        if ($_SESSION['joueur']->getPointVie() > 0) {
-            
+        $nouvelleInformations = "";
+
+        $positionTreasure = $_SESSION['map']->getTreasurePosition();
+        $positionJoueur = $_SESSION['joueur']->getPosition();
+
+        if ($_SESSION['joueur']->getPointVie() > 0 && $positionJoueur !== $positionTreasure) {
+            // cas où le joueur est en vie et n'est pas sur le trésor
+
             $longueurMap = $_SESSION['map']->getMapSize();
-            $positionX = $_SESSION['joueur']->getPosition()['x'];
-            $positionY = $_SESSION['joueur']->getPosition()['y'];
+            $positionX = $positionJoueur['x'];
+            $positionY = $positionJoueur['y'];
 
             $deplacement = true;
             // choix du déplacement
@@ -78,7 +82,7 @@
                         $_SESSION['joueur']->seDeplacerDroite();
                     } else {
                         $deplacement = false;
-                        $_SESSION['informations'] .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                        $nouvelleInformations .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
                     }
                     break;
                 case "gauche":
@@ -86,7 +90,7 @@
                         $_SESSION['joueur']->seDeplacerGauche();
                     } else {
                         $deplacement = false;
-                        $_SESSION['informations'] .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                        $nouvelleInformations .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
                     }
                     break;
                 case "haut":
@@ -94,7 +98,7 @@
                         $_SESSION['joueur']->seDeplacerHaut();
                     } else {
                         $deplacement = false;
-                        $_SESSION['informations'] .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                        $nouvelleInformations .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
                     }
                     break;
                 case "bas":
@@ -102,37 +106,42 @@
                         $_SESSION['joueur']->seDeplacerBas();
                     } else {
                         $deplacement = false;
-                        $_SESSION['informations'] .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                        $nouvelleInformations .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
                     }
                     break;
             }
 
             if ($deplacement) {
+                // cas où le joueur s'est déplacé
 
                 $joueurPosition = $_SESSION['joueur']->getPosition();
         
                 if($joueurPosition == $_SESSION['map']->getTreasurePosition()) {
                     // cas où le joueur est sur la case du trésor
-                    $_SESSION['informations'] .= "GG YA WIN !!!<br>";
+                    $nouvelleInformations .= "<p class='text-success fs-5'>GG YA WIN !!!</p>";
                 }
                 else if (!in_array($joueurPosition, $_SESSION['map']->getMonsterPositions())) {
                     // cas où le joueur est sur une cas vide
-                    $_SESSION['informations'] .= "Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].<br>";
+                    $nouvelleInformations .= "Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].<br>";
                 } else { 
                     // cas où le joueur est sur la case d'un monstre
                     $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(3, 15), rand(3, 15)));
-                    $_SESSION['informations'] .= $resultatCombat;
+                    $nouvelleInformations .= $resultatCombat;
                     if ($_SESSION['joueur']->getPointVie() > 0) {
+                        // cas où le joueur est toujours en vie
                         $monstrePosition = $_SESSION['map']->getMonsterPositions();
                         $indexMonstre = array_search($joueurPosition, $monstrePosition);
 
+                        // retire le monstre vaincu du tableau
                         unset($monstrePosition[$indexMonstre]);
                         $_SESSION['map']->setMonsterPositions($monstrePosition);
-                        $_SESSION['informations'] .= "Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].<br>";
+                        $nouvelleInformations .= "Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].<br>";
                     }
                 }
             }
         }
+
+        $_SESSION['informations'] = $nouvelleInformations.$_SESSION['informations'];
 
     }
     
