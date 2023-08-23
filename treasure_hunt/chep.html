@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Diagonal Divisions</title>
+    <style>
+.clip {
+  --size: 200px;
+  height: var(--size);
+  width: var(--size);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  border-radius: 50%;
+}
+
+.rotate {
+  height: calc(var(--size) * 1.5);
+  width: calc(var(--size) * 1.5);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  transform: translate(-50%, -50%) translate(calc(var(--size) * 0.5), calc(var(--size) * 0.5)) rotate(45deg) ;
+}
+
+.red {
+  background: rgb(212, 178, 178);
+}
+.blue {
+  background: rgb(212, 178, 178);
+}
+.yellow {
+  background: rgb(212, 178, 178);
+}
+.green {
+  background: rgb(212, 178, 178);
+}
+
+    </style>
+</head>
+<body>
+    <div class="clip">
+        <div class="rotate">
+            <button class="color-button red" onclick="changeColor(this)"></button>
+            <button class="color-button blue" onclick="changeColor(this)"></button>
+            <button class="color-button yellow" onclick="changeColor(this)"></button>
+            <button class="color-button green" onclick="changeColor(this)"></button>
+        </div>
+    </div>
+    <script>
+        let changingColor = false;
+
+        function changeColor(button) {
+            if (changingColor) return;
+
+            changingColor = true;
+            const originalColor = button.style.background;
+            const newColor = "purple"; // Changer la couleur à celle souhaitée
+            button.style.background = newColor;
+            
+            const otherButtons = document.querySelectorAll('.color-button:not(.red)');
+            otherButtons.forEach(btn => btn.disabled = true);
+
+            setTimeout(() => {
+                button.style.background = originalColor;
+                otherButtons.forEach(btn => btn.disabled = false);
+                changingColor = false;
+            }, 500); // Revenir à la couleur d'origine après 1000 ms (1 seconde)
+        }
+    </script>
+</body>
+</html>
