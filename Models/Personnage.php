@@ -91,9 +91,14 @@
          * Les points de vie diminuent du montant de la force de l'ennemi.
 		 */ 
         public function prendUnCoup(int $pForceEnnemi) {
+
+            $resultat = "";
+
             $this->pointVie -= $pForceEnnemi;
-            echo "Le ".get_class($this)." a subi ".$pForceEnnemi. " dégâts.<br>";
-            echo "Le ".get_class($this)." a ".$this->pointVie." points de vie restants.<br>";
+            $resultat .= "Le ".get_class($this)." a subi ".$pForceEnnemi. " dégâts.<br>";
+            $resultat .= "Le ".get_class($this)." a ".$this->pointVie." points de vie restants.<br>";
+            
+            return $resultat;
         }
 
     }

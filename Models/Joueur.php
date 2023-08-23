@@ -97,31 +97,35 @@
          * Le Joueur combat un monstre.
 		 */ 
         public function combattreMonstre(Monstre $pMonstre) {
+
+            $resultat = "";
             
-            echo "Vous avez rencontré un monstre. Un combat commence.<br>";
+            $resultat .= "Vous avez rencontré un monstre. Un combat commence.<br>";
             // Combat tant que le joueur et le monstre sont en vie
-            while ($this->pointVie > 0 && $pMonster > 0) {
+            while ($this->pointVie > 0 && $pMonstre->getPointVie() > 0) {
                 // Le monstre subi un coup du joueur
-                $pMonstre->prendUnCoup($this->force);
+                $resultat .= $pMonstre->prendUnCoup($this->force);
                 if ($pMonstre->getPointVie() > 0) {
                     // Cas où le monstre survit au coup du joueur
                     // Le joueur subi un coup du monstre
-                    $this->prendUnCoup($pMonstre->getForce());
+                    $resultat .= $this->prendUnCoup($pMonstre->getForce());
                 }
             }
 
             // Résultat du combat
-            if ($this->pointVie == 0) {
+            if ($this->pointVie <= 0) {
                 // Cas de la défaite du joueur
-                echo "Défaite ! Vous êtes mort !";
+                $resultat .=  "Défaite ! Vous êtes mort !<br>";
             } else {
                 // Cas de la victoire du joueur
-                echo "Victoire ! Vous avez vaincu le monstre !";
+                $resultat .= "Victoire ! Vous avez vaincu le monstre !<br>";
                 // Remet les points de vie du joueur au maximum
                 $this->pointVie = self::MAX_VIE;
                 // Le joueur de l'expérience selon la force du monstre vaincu
                 $this->gagneExperience($pMonstre->getForce());
             }
+
+            return $resultat;
         }
 
     }
