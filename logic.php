@@ -4,15 +4,38 @@
     require_once 'Models/Monstre.php';
     require_once 'Models/Carte.php';
 
+    session_start();
+
+    // reception requête AJAX suite à un click sur une case
+    if (isset($_GET['function']) && function_exists($_GET['function'])) {
+        if (isset($_GET['direction'])) {
+            call_user_func($_GET['function'], $_GET['direction']);
+        } else {
+            call_user_func($_GET['function']);
+        }
+        unset($_GET['function']);
+    }
+
+    // reception requête AJAX suite à un click sur une case
+    if (isset($_GET['function']) && function_exists($_GET['function']) && isset($_GET['position'])) {
+        call_user_func($_GET['function'], $_GET['position']);
+    }
+
     /**
      * Commence une nouvelle partie
      */
     function startGame() {
 
+        if (isset($_SESSION['map'])) {
+            unset($_SESSION['map']);
+            unset($_SESSION['joueur']);
+            unset($_SESSION['informations']);
+        }
+
         // Créer la carte
         $map = new Carte();
         // Génére les positions du trésor et des monstres
-        $map->generateEntities(5);
+        $map->generateEntities(rand(10, 50));
     
         // Récupère les positions des différentes entités
         $monsterPos = $map->getMonsterPositions();
@@ -27,7 +50,11 @@
     
         // Affecte la position du joueur
         $joueur->setPosition($playerPos);
-        var_dump($joueur);
+
+        $_SESSION['map'] = $map;
+        $_SESSION['joueur'] = $joueur;
+        $_SESSION['informations'] = "Début de la chasse !!<br>Vous vous trouvez en [".$playerPos['x'].", ".$playerPos['y']."].<br>";
+
     }
 
     /**
@@ -37,35 +64,76 @@
      */
     function deplacerJoueur(string $pDirection) {
 
-        // choix du déplacement
-        switch ($pDirection) {
-            case "droite":
-                $joueur->seDeplacerDroite();
-                break;
-            case "gauche":
-                $joueur->seDeplacerGauche();
-                break;
-            case "haut":
-                $joueur->seDeplacerHaut();
-                break;
-            case "bas":
-                $joueur->seDeplacerBas();
-                break;
+        if ($_SESSION['joueur']->getPointVie() > 0) {
+            
+            $longueurMap = $_SESSION['map']->getMapSize();
+            $positionX = $_SESSION['joueur']->getPosition()['x'];
+            $positionY = $_SESSION['joueur']->getPosition()['y'];
+
+            $deplacement = true;
+            // choix du déplacement
+            switch ($pDirection) {
+                case "droite":
+                    if ($positionX < $longueurMap - 1) {
+                        $_SESSION['joueur']->seDeplacerDroite();
+                    } else {
+                        $deplacement = false;
+                        $_SESSION['informations'] .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                    }
+                    break;
+                case "gauche":
+                    if ($positionX > 0) {
+                        $_SESSION['joueur']->seDeplacerGauche();
+                    } else {
+                        $deplacement = false;
+                        $_SESSION['informations'] .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                    }
+                    break;
+                case "haut":
+                    if ($positionY < $longueurMap - 1) {
+                        $_SESSION['joueur']->seDeplacerHaut();
+                    } else {
+                        $deplacement = false;
+                        $_SESSION['informations'] .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                    }
+                    break;
+                case "bas":
+                    if ($positionY > 0) {
+                        $_SESSION['joueur']->seDeplacerBas();
+                    } else {
+                        $deplacement = false;
+                        $_SESSION['informations'] .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                    }
+                    break;
+            }
+
+            if ($deplacement) {
+
+                $joueurPosition = $_SESSION['joueur']->getPosition();
+        
+                if($joueurPosition == $_SESSION['map']->getTreasurePosition()) {
+                    // cas où le joueur est sur la case du trésor
+                    $_SESSION['informations'] .= "GG YA WIN !!!<br>";
+                }
+                else if (!in_array($joueurPosition, $_SESSION['map']->getMonsterPositions())) {
+                    // cas où le joueur est sur une cas vide
+                    $_SESSION['informations'] .= "Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].<br>";
+                } else { 
+                    // cas où le joueur est sur la case d'un monstre
+                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(3, 15), rand(3, 15)));
+                    $_SESSION['informations'] .= $resultatCombat;
+                    if ($_SESSION['joueur']->getPointVie() > 0) {
+                        $monstrePosition = $_SESSION['map']->getMonsterPositions();
+                        $indexMonstre = array_search($joueurPosition, $monstrePosition);
+
+                        unset($monstrePosition[$indexMonstre]);
+                        $_SESSION['map']->setMonsterPositions($monstrePosition);
+                        $_SESSION['informations'] .= "Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].<br>";
+                    }
+                }
+            }
         }
 
-        $joueurPosition = $joueur->getPosition();
-
-        if($joueurPosition == $map->getTreasurePosition()) {
-            // cas où le joueur est sur la case du trésor
-            echo "GG YA WIN !!!";
-        }
-        else if (!in_array($joueurPosition, $map->getMonsterPositions())) {
-            // cas où le joueur est sur une cas vide
-            echo "Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].";
-        } else { 
-            // cas où le joueur est sur la case d'un monstre
-            $joueur->combattreMonstre(new Monstre(3, 8));
-        }
     }
     
 ?>
