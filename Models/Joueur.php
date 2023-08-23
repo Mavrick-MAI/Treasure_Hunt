@@ -1,6 +1,7 @@
 <?php
 
     require_once 'Personnage.php';
+    require_once 'Monstre.php';
 
     class Joueur extends Personnage {
 
@@ -9,12 +10,18 @@
 		 */ 
         protected array $position;
 
+        // Les points de vie maximum de base
+        const MAX_VIE = 10;
+
+        // La force de base
+        const FORCE = 5;
+
 		/**
 		 * @return Joueur
 		 */ 
-        public function __construct(int $pPointVie, int $pForce) {
+        public function __construct() {
             
-			parent::__construct($pPointVie, $pForce);
+			parent::__construct(self::MAX_VIE, self::FORCE);
         }
 
         /**
@@ -82,6 +89,39 @@
 		 */ 
         public function seDeplacerBas() {
             $this->position['y']--;
+        }
+
+		/**
+		 * @return void
+         * 
+         * Le Joueur combat un monstre.
+		 */ 
+        public function combattreMonstre(Monstre $pMonstre) {
+            
+            echo "Vous avez rencontré un monstre. Un combat commence.<br>";
+            // Combat tant que le joueur et le monstre sont en vie
+            while ($this->pointVie > 0 && $pMonster > 0) {
+                // Le monstre subi un coup du joueur
+                $pMonstre->prendUnCoup($this->force);
+                if ($pMonstre->getPointVie() > 0) {
+                    // Cas où le monstre survit au coup du joueur
+                    // Le joueur subi un coup du monstre
+                    $this->prendUnCoup($pMonstre->getForce());
+                }
+            }
+
+            // Résultat du combat
+            if ($this->pointVie == 0) {
+                // Cas de la défaite du joueur
+                echo "Défaite ! Vous êtes mort !";
+            } else {
+                // Cas de la victoire du joueur
+                echo "Victoire ! Vous avez vaincu le monstre !";
+                // Remet les points de vie du joueur au maximum
+                $this->pointVie = self::MAX_VIE;
+                // Le joueur de l'expérience selon la force du monstre vaincu
+                $this->gagneExperience($pMonstre->getForce());
+            }
         }
 
     }
