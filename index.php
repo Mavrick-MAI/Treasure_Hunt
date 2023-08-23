@@ -75,7 +75,12 @@
                 </div>
 
               </div>
-              </button>
+              <div class="row mt-5">
+                <h2 class="mt-5">Objectif:</h2>
+                <span>L'objectif est de trouver un trésor caché sur la carte. Cependant, des monstres se cachent également sur la carte et vous devrez les affronter si vous les rencontrez. Si vous gagnez un combat, vos points de vie (PV) sont restaurés, en revanche, si vous perdez, la partie est finie. Bonne chance dans votre quête du trésor caché !
+                </span>
+              </div>
+
       
                 
             </div>
