@@ -39,10 +39,11 @@
         Nouvelle partie
       </button>
       <div class="row mt-3 text-center justify-content-center">      
-        <div id = "chat" class="col-sm-8 pt-2">
+        <div id = "chat" class="col-sm-7 pt-2">
           <?php echo isset($_SESSION['informations']) ? $_SESSION['informations'] : "Pour commencer une partie, cliquez sur \"Nouvelle Partie\"" ?>
         </div>
-        <div class="col-sm-4 ">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4">
           <div class="row mb-2 text-center justify-content-center">
             <div class="col-3 col-sm-4"></div>
             <div class="col-3 col-sm-4">              

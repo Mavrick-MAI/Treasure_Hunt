@@ -33,7 +33,7 @@
         // Créer la carte
         $map = new Carte();
         // Génére les positions du trésor et des monstres
-        $map->generateEntities(rand(10, 50));
+        $map->generateEntities(rand(10, 15));
     
         // Récupère les positions des différentes entités
         $monsterPos = $map->getMonsterPositions();
@@ -118,15 +118,17 @@
                 $joueurNiveau = $_SESSION['joueur']->getNiveau();
         
                 if($joueurPosition == $_SESSION['map']->getTreasurePosition()) {
+                    $_SESSION['joueur']->setPocheOr($_SESSION['joueur']->getPocheOr() + 50);
                     // cas où le joueur est sur la case du trésor
-                    $nouvelleInformations .= "<p class='text-success fs-5'>GG YA WIN !!!</p>";
+                    $nouvelleInformations .= "<p class='text-success fs-5'>GG YA WIN !!!<br>";
+                    $nouvelleInformations .= "Vous avez récolté ".$_SESSION['joueur']->getPocheOr()." pièces d'or. Félicitations !!</p>";
                 }
                 else if (!in_array($joueurPosition, $_SESSION['map']->getMonsterPositions())) {
                     // cas où le joueur est sur une cas vide
                     $nouvelleInformations .= "<p>Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].</p>";
                 } else { 
                     // cas où le joueur est sur la case d'un monstre
-                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(2 + $joueurNiveau, 14 + $joueurNiveau), rand(2 + $joueurNiveau, 14 + $joueurNiveau)));
+                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(5 + $joueurNiveau, 10 + $joueurNiveau), rand(3 + $joueurNiveau, 8 + $joueurNiveau)));
                     $nouvelleInformations .= $resultatCombat;
                     if ($_SESSION['joueur']->getPointVie() > 0) {
                         // cas où le joueur est toujours en vie

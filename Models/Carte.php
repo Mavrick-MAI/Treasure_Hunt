@@ -10,7 +10,7 @@ class Carte {
     protected array $monsterPositions; 
 
     public function __construct() {
-        $this->mapSize = 10;
+        $this->mapSize = 5;
         $this->monsterPositions = array();
     }
 

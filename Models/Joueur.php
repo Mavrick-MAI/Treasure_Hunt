@@ -20,6 +20,11 @@
 		 */ 
         protected int $maxVie;
 
+		/**
+         * La poche d'or
+		 */ 
+        protected int $pocheOr;
+
         // Les points de vie de base
         const VIE = 10;
 
@@ -35,6 +40,7 @@
             $this->maxVie = self::VIE;
             $this->type = "Joueur";
             $this->niveau = 1;
+            $this->pocheOr = 0;
         }
 
         /**
@@ -92,6 +98,25 @@
 		 */ 
         public function setMaxVie(int $pMaxVie) {
             $this->maxVie = $pMaxVie;
+        }
+
+        /**
+		 * @return int
+         * 
+         * Retourne la poche d'or
+		 */ 
+        public function getPocheOr(): int {
+            return $this->pocheOr;
+        }
+
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Modifie la poche d'or
+		 */ 
+        public function setPocheOr(int $pPocheOr) {
+            $this->pocheOr = $pPocheOr;
         }
 
 		/**
@@ -173,28 +198,47 @@
             $resultat = "";
             
             $resultat .= "<p>Vous avez rencontré un ".$pMonstre->getType().". Un combat commence.<br>";
-            // Combat tant que le joueur et le monstre sont en vie
-            while ($this->pointVie > 0 && $pMonstre->getPointVie() > 0) {
-                // Le monstre subi un coup du joueur
-                $resultat .= $pMonstre->prendUnCoup($this->force);
-                if ($pMonstre->getPointVie() > 0) {
-                    // Cas où le monstre survit au coup du joueur
-                    // Le joueur subi un coup du monstre
-                    $resultat .= $this->prendUnCoup($pMonstre->getForce());
-                }
-            }
-            // Résultat du combat
-            if ($this->pointVie <= 0) {
-                // Cas de la défaite du joueur
-                $resultat .=  "<p class='text-danger'>Défaite ! Vous êtes mort !</p>";
-                $resultat .=  "<p class='text-danger'>Retentez votre chance en cliquant sur \"Nouvelle partie\"</p>";
+            if ($pMonstre->getType() == "Developpeur de Blizzard Entertainment" && $this->pocheOr == 0) {
+                $resultat .= "<p>Le ".$pMonstre->getType()." ne vous attaque pas car vous n'avez pas d'or.</p>";
             } else {
-                // Cas de la victoire du joueur
-                $resultat .= "<p class='text-success'>Victoire ! Vous avez vaincu le ".$pMonstre->getType()." !</p>";
-                // Le joueur de l'expérience selon la force du monstre vaincu
-                $resultat .= $this->gagneExperience($pMonstre->getForce());
-                // Remet les points de vie du joueur au maximum
-                $this->pointVie = $this->maxVie;
+                // Combat tant que le joueur et le monstre sont en vie
+                while ($this->pointVie > 0 && $pMonstre->getPointVie() > 0) {
+                    // Le monstre subi un coup du joueur
+                    $resultat .= $pMonstre->prendUnCoup($this->force);
+                    if ($pMonstre->getPointVie() > 0) {
+                        // Cas où le monstre survit au coup du joueur
+                        // Le joueur subi un coup du monstre
+                        $resultat .= $this->prendUnCoup($pMonstre->getForce());
+                    }
+                }
+                // Résultat du combat
+                if ($this->pointVie <= 0) {
+                    // Cas de la défaite du joueur
+                    $resultat .=  "<p class='text-danger'>Défaite ! Vous êtes mort !</p>";
+                    $resultat .=  "<p class='text-danger'>Retentez votre chance en cliquant sur \"Nouvelle partie\"</p>";
+                } else {
+                    // Cas de la victoire du joueur
+                    $resultat .= "<p class='text-success'>Victoire ! Vous avez vaincu le ".$pMonstre->getType()." !</p>";
+
+                    if ($pMonstre->getType() == "Developpeur de Blizzard Entertainment") {
+                        $this->pocheOr = 0;
+                        $resultat .= "<p>Le ".$pMonstre->getType()." vous a volé votre or car Blizzard gagne toujours!<br>";
+                        $resultat .= "Vous possédez ".$this->pocheOr." pièces d'or !</p>";
+                    } else {
+                        if ($pMonstre->getOr() != 0) {
+                            // Le joueur gagne l'or du monstre
+                            $this->pocheOr += $pMonstre->getOr(); 
+                            // le Joueur ramasse de l'or
+                            $resultat .= "<p>Vous avez trouvé  ".$pMonstre->getOr()." pièces d'or !<br>";
+                            $resultat .= "Vous possédez ".$this->pocheOr." pièces d'or !</p>";
+                        }
+                    }
+                    
+                    // Le joueur de l'expérience selon la force du monstre vaincu
+                    $resultat .= $this->gagneExperience($pMonstre->getForce());
+                    // Remet les points de vie du joueur au maximum
+                    $this->pointVie = $this->maxVie;
+                }
             }
             $resultat .= "</p>";
             return $resultat;
