@@ -40,7 +40,7 @@
       </button>
       <div class="row mt-3 text-center justify-content-center">      
         <div id = "chat" class="col-sm-8 pt-2">
-          <?php echo $_SESSION['informations'] ?>
+          <?php echo isset($_SESSION['informations']) ? $_SESSION['informations'] : "Pour commencer une partie, cliquez sur \"Nouvelle Partie\"" ?>
         </div>
         <div class="col-sm-4 ">
           <div class="row mb-2 text-center justify-content-center">
@@ -85,7 +85,7 @@
             <h2 class="mt-5">Objectif:</h2>
             <span>L'objectif est de trouver un trésor caché sur la carte. Cependant, des monstres se cachent également sur la carte et vous devrez les affronter si vous les rencontrez. Si vous gagnez un combat, vos points de vie (PV) sont restaurés, en revanche, si vous perdez, la partie est finie. Bonne chance dans votre quête du trésor caché !
             </span>
-            <p class="mt-3">Pour vous déplacez, utilisez les flèches directionnelles.</p>
+            <p class="mt-3">Pour vous déplacez, cliquez sur les flèches directionnelles à l'écran.</p>
           </div> 
         </div>
       </div>

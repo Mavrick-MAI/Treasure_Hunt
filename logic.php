@@ -125,7 +125,7 @@
                     $nouvelleInformations .= "<p>Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].</p>";
                 } else { 
                     // cas où le joueur est sur la case d'un monstre
-                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(3, 15), rand(3, 15)));
+                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(3, 3), rand(3, 3)));
                     $nouvelleInformations .= $resultatCombat;
                     if ($_SESSION['joueur']->getPointVie() > 0) {
                         // cas où le joueur est toujours en vie
@@ -139,8 +139,8 @@
                     }
                 }
             }
+            $nouvelleInformations .= "<p>--------------------</p>";
         }
-        $nouvelleInformations .= "<p>--------------------</p>";
         $_SESSION['informations'] = $nouvelleInformations.$_SESSION['informations'];
 
     }

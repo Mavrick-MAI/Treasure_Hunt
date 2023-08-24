@@ -18,6 +18,11 @@
         protected int $pointExperience;
 
 		/**
+         * Le type
+		 */ 
+        protected string $type;
+
+		/**
 		 * @return Personnage
 		 */ 
         public function __construct(int $pPointVie, int $pForce) {
@@ -83,6 +88,25 @@
             $this->pointExperience = $pPointExperience;
         }
 
+        /**
+		 * @return string
+         * 
+         * Retourne le type
+		 */ 
+        public function getType(): string {
+            return $this->type;
+        }
+
+		/**
+		 * @param string
+		 * @return void
+         * 
+         * Modifie le type
+		 */ 
+        public function setType(string $pType) {
+            $this->type = $pType;
+        }
+
 		/**
 		 * @param int
 		 * @return void
@@ -95,8 +119,8 @@
             $resultat = "";
 
             $this->pointVie -= $pForceEnnemi;
-            $resultat .= "<p>Le ".get_class($this)." a subi ".$pForceEnnemi. " dégâts.<br>";
-            $resultat .= "Le ".get_class($this)." a ".$this->pointVie." points de vie restants.</p>";
+            $resultat .= "<p>Le ".$this->type." a subi ".$pForceEnnemi. " dégâts.<br>";
+            $resultat .= "Le ".$this->type." a ".$this->pointVie." points de vie restants.</p>";
             
             return $resultat;
         }

@@ -10,8 +10,18 @@
 		 */ 
         protected array $position;
 
-        // Les points de vie maximum de base
-        const MAX_VIE = 10;
+		/**
+         * Le niveau
+		 */ 
+        protected int $niveau;
+
+		/**
+         * Les points de vie maximum
+		 */ 
+        protected int $maxVie;
+
+        // Les points de vie de base
+        const VIE = 10;
 
         // La force de base
         const FORCE = 5;
@@ -21,7 +31,10 @@
 		 */ 
         public function __construct() {
             
-			parent::__construct(self::MAX_VIE, self::FORCE);
+			parent::__construct(self::VIE, self::FORCE);
+            $this->maxVie = self::VIE;
+            $this->type = "Joueur";
+            $this->niveau = 1;
         }
 
         /**
@@ -43,6 +56,44 @@
             $this->position = $pPosition;
         }
 
+        /**
+		 * @return int
+         * 
+         * Retourne le niveau
+		 */ 
+        public function getNiveau(): int {
+            return $this->niveau;
+        }
+
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Modifie le niveau
+		 */ 
+        public function setNiveau(int $pNiveau) {
+            $this->niveau = $pNiveau;
+        }
+
+        /**
+		 * @return int
+         * 
+         * Retourne les points de vie maximum
+		 */ 
+        public function getMaxVie(): int {
+            return $this->maxVie;
+        }
+
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Modifie les points de vie maximum
+		 */ 
+        public function setMaxVie(int $pMaxVie) {
+            $this->maxVie = $pMaxVie;
+        }
+
 		/**
 		 * @param int
 		 * @return void
@@ -54,8 +105,24 @@
             $resultat = "";
 
             $this->pointExperience += $pPointExperience;
-            $resultat .= "<p>Le Monstre a été vaincu.<br>";
-            $resultat .= "Le Joueur possède ".$this->pointExperience. " points d'expérience.</p>";
+
+			// si le joueur a suffisament de points d'expérience.
+			if ($this->pointExperience >= 10*$this->niveau) {
+				// le joueur gagne un niveau.
+				$this->niveau++;
+				// le joueur gagne 2 points de vie.
+				$this->maxVie += 2;
+				// le joueur gagne un point de force.
+				$this->force++;
+				// les points d'expérience retombe à 0.
+				$this->pointExperience = 0;
+
+				$resultat .= "<p class='text-success text-uppercase'>Vous êtes passé niveau ".$this->niveau." !</p>";
+				$resultat .= "<p>Point de vie : ".($this->maxVie-2)." ---> ".$this->maxVie." !<br>";
+				$resultat .= "Force : ".($this->force-1)." ---> ".$this->force." !</p>";
+			}
+            $resultat .= "<p>Le Joueur possède désormais ".$this->pointExperience. " points d'expérience.<br>";
+            $resultat .= "Il manque ".$this->niveau*10 - $this->pointExperience. " points d'expérience pour le prochain niveau.</p>";
 
             return $resultat;
         }
@@ -105,7 +172,7 @@
 
             $resultat = "";
             
-            $resultat .= "<p>Vous avez rencontré un monstre. Un combat commence.<br>";
+            $resultat .= "<p>Vous avez rencontré un ".$pMonstre->getType().". Un combat commence.<br>";
             // Combat tant que le joueur et le monstre sont en vie
             while ($this->pointVie > 0 && $pMonstre->getPointVie() > 0) {
                 // Le monstre subi un coup du joueur
@@ -116,18 +183,18 @@
                     $resultat .= $this->prendUnCoup($pMonstre->getForce());
                 }
             }
-
             // Résultat du combat
             if ($this->pointVie <= 0) {
                 // Cas de la défaite du joueur
                 $resultat .=  "<p class='text-danger'>Défaite ! Vous êtes mort !</p>";
+                $resultat .=  "<p class='text-danger'>Retentez votre chance en cliquant sur \"Nouvelle partie\"</p>";
             } else {
                 // Cas de la victoire du joueur
-                $resultat .= "<p class='text-success'>Victoire ! Vous avez vaincu le monstre !</p>";
-                // Remet les points de vie du joueur au maximum
-                $this->pointVie = self::MAX_VIE;
+                $resultat .= "<p class='text-success'>Victoire ! Vous avez vaincu le ".$pMonstre->getType()." !</p>";
                 // Le joueur de l'expérience selon la force du monstre vaincu
                 $resultat .= $this->gagneExperience($pMonstre->getForce());
+                // Remet les points de vie du joueur au maximum
+                $this->pointVie = $this->maxVie;
             }
             $resultat .= "</p>";
             return $resultat;
