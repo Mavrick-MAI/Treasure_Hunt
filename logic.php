@@ -115,6 +115,7 @@
                 // cas où le joueur s'est déplacé
 
                 $joueurPosition = $_SESSION['joueur']->getPosition();
+                $joueurNiveau = $_SESSION['joueur']->getNiveau();
         
                 if($joueurPosition == $_SESSION['map']->getTreasurePosition()) {
                     // cas où le joueur est sur la case du trésor
@@ -125,7 +126,7 @@
                     $nouvelleInformations .= "<p>Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].</p>";
                 } else { 
                     // cas où le joueur est sur la case d'un monstre
-                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(3, 3), rand(3, 3)));
+                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(2 + $joueurNiveau, 14 + $joueurNiveau), rand(2 + $joueurNiveau, 14 + $joueurNiveau)));
                     $nouvelleInformations .= $resultatCombat;
                     if ($_SESSION['joueur']->getPointVie() > 0) {
                         // cas où le joueur est toujours en vie
