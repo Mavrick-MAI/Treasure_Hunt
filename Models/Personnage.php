@@ -95,8 +95,8 @@
             $resultat = "";
 
             $this->pointVie -= $pForceEnnemi;
-            $resultat .= "Le ".get_class($this)." a subi ".$pForceEnnemi. " dégâts.<br>";
-            $resultat .= "Le ".get_class($this)." a ".$this->pointVie." points de vie restants.<br>";
+            $resultat .= "<p>Le ".get_class($this)." a subi ".$pForceEnnemi. " dégâts.<br>";
+            $resultat .= "Le ".get_class($this)." a ".$this->pointVie." points de vie restants.</p>";
             
             return $resultat;
         }

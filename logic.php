@@ -82,7 +82,7 @@
                         $_SESSION['joueur']->seDeplacerDroite();
                     } else {
                         $deplacement = false;
-                        $nouvelleInformations .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                        $nouvelleInformations .= "<p>Déplacement impossible ! Vous êtes au bord de la carte !</p>";
                     }
                     break;
                 case "gauche":
@@ -90,7 +90,7 @@
                         $_SESSION['joueur']->seDeplacerGauche();
                     } else {
                         $deplacement = false;
-                        $nouvelleInformations .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                        $nouvelleInformations .= "<p>Déplacement impossible ! Vous êtes au bord de la carte !</p>";
                     }
                     break;
                 case "haut":
@@ -98,7 +98,7 @@
                         $_SESSION['joueur']->seDeplacerHaut();
                     } else {
                         $deplacement = false;
-                        $nouvelleInformations .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                        $nouvelleInformations .= "<p>Déplacement impossible ! Vous êtes au bord de la carte !</p>";
                     }
                     break;
                 case "bas":
@@ -106,7 +106,7 @@
                         $_SESSION['joueur']->seDeplacerBas();
                     } else {
                         $deplacement = false;
-                        $nouvelleInformations .= "Déplacement impossible ! Vous êtes au bord de la carte !<br>";
+                        $nouvelleInformations .= "<p>Déplacement impossible ! Vous êtes au bord de la carte !</p>";
                     }
                     break;
             }
@@ -122,7 +122,7 @@
                 }
                 else if (!in_array($joueurPosition, $_SESSION['map']->getMonsterPositions())) {
                     // cas où le joueur est sur une cas vide
-                    $nouvelleInformations .= "Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].<br>";
+                    $nouvelleInformations .= "<p>Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].</p>";
                 } else { 
                     // cas où le joueur est sur la case d'un monstre
                     $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(3, 15), rand(3, 15)));
@@ -135,12 +135,12 @@
                         // retire le monstre vaincu du tableau
                         unset($monstrePosition[$indexMonstre]);
                         $_SESSION['map']->setMonsterPositions($monstrePosition);
-                        $nouvelleInformations .= "Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].<br>";
+                        $nouvelleInformations .= "<p>Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].</p>";
                     }
                 }
             }
         }
-
+        $nouvelleInformations .= "<p>--------------------</p>";
         $_SESSION['informations'] = $nouvelleInformations.$_SESSION['informations'];
 
     }
