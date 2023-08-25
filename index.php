@@ -29,8 +29,6 @@
     <?php
 
         require_once 'logic.php';
-        var_dump($_SESSION['test']);
-        // var_dump($_SESSION['joueur']->getListItems());
     ?>
     
     <div class="container">
