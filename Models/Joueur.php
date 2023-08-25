@@ -25,6 +25,11 @@
 		 */ 
         protected int $pocheOr;
 
+		/**
+         * Le pourcent d'expérience 
+		 */ 
+        protected int $pourcentXp;
+
         // Les points de vie de base
         const VIE = 10;
 
@@ -40,6 +45,7 @@
             $this->maxVie = self::VIE;
             $this->type = "Joueur";
             $this->niveau = 1;
+            $this->pourcentXp = 0;
             $this->pocheOr = 0;
         }
 
@@ -119,6 +125,25 @@
             $this->pocheOr = $pPocheOr;
         }
 
+        /**
+		 * @return int
+         * 
+         * Retourne le pourcent d'expérience
+		 */ 
+        public function getPourcentXp(): int {
+            return $this->pourcentXp;
+        }
+
+		/**
+		 * @param int
+		 * @return void
+         * 
+         * Modifie le pourcent d'expérience
+		 */ 
+        public function setPourcentXp(int $pPourcentXp) {
+            $this->pourcentXp = $pPourcentXp;
+        }
+
 		/**
 		 * @param int
 		 * @return void
@@ -146,6 +171,8 @@
 				$resultat .= "<p>Point de vie : ".($this->maxVie-2)." ---> ".$this->maxVie." !<br>";
 				$resultat .= "Force : ".($this->force-1)." ---> ".$this->force." !</p>";
 			}
+            // les pourcent d'expérience est modifié.
+            $this->pourcentXp = $this->pointExperience*100/($this->niveau*10);
             $resultat .= "<p>Le Joueur possède désormais ".$this->pointExperience. " points d'expérience.<br>";
             $resultat .= "Il manque ".$this->niveau*10 - $this->pointExperience. " points d'expérience pour le prochain niveau.</p>";
 

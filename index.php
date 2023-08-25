@@ -25,26 +25,39 @@
     </style>
   </head>
 <body>
+    <script src="js/script.js"></script>
     <?php
 
         require_once 'logic.php';
+        var_dump($_SESSION['listeItem']);
     ?>
     
     <div class="container">
       <div class="row text-center">
-        <h1>Treasure_Hunt</h1>
+        <h1 class="mt-3"><i class="fa-brands fa-jedi-order fa-2xl" style="color: #e08300;"></i> Treasure_Hunt <i class="fa-brands fa-rebel fa-xl" style="color: #d00b0b;"></i></h1>
 
       </div>
       <button class="btn btn-outline-dark " onclick="startGame()">
         Nouvelle partie
       </button>
       <div class="row mt-3 text-center justify-content-center">      
-        <div id = "chat" class="col-sm-7 pt-2">
+        <div id = "chat" class="col-sm-6 pt-2">
           <?php echo isset($_SESSION['informations']) ? $_SESSION['informations'] : "Pour commencer une partie, cliquez sur \"Nouvelle Partie\"" ?>
         </div>
         <div class="col-sm-1"></div>
-        <div class="col-sm-4">
+        <div class="col-sm-5">
           <div class="row mb-2 text-center justify-content-center">
+            <h2>Votre personnage</h2>
+            <div class="col-xl-3 mt-1"><i class="fa-solid fa-location-dot fa-xl" style="color: #c25b38;"></i> : <?php echo isset($_SESSION['joueur']) ? "[".$_SESSION['joueur']->getPosition()['x'] : ""; ?> <?php echo isset($_SESSION['joueur']) ? ", ".$_SESSION['joueur']->getPosition()['y']."]" : ""; ?></div>
+            <div class="col-xl-3 mt-1"><i class="fa-solid fa-heart fa-xl" style="color: #ff0000;"></i> : <?php echo isset($_SESSION['joueur']) ? $_SESSION['joueur']->getPointVie() : ""; ?></div>
+            <div class="col-xl-3 mt-1"><i class="fa-solid fa-hand-fist fa-xl" style="color: #382e2e;"></i> : <?php echo isset($_SESSION['joueur']) ? $_SESSION['joueur']->getForce() : ""; ?></div>
+            <div class="col-xl-3 mt-1"><i class="fa-solid fa-angles-up fa-xl" style="color: #FFD700;"></i> : <?php echo isset($_SESSION['joueur']) ? $_SESSION['joueur']->getNiveau() : ""; ?></div>
+          </div>
+          <h3>Expérience</h3>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated <?php echo isset($_SESSION['progressBarColor']) ? $_SESSION['progressBarColor'] : "" ?>" style="width: <?php echo isset($_SESSION['joueur']) ? $_SESSION['joueur']->getPourcentXp() : "" ?>%"></div>
+          </div>
+          <div class="row mb-2 text-center justify-content-center mt-3">
             <div class="col-3 col-sm-4"></div>
             <div class="col-3 col-sm-4">              
               <button class="btn" onclick="deplacerJoueur('haut')">
@@ -80,19 +93,47 @@
               </button>
             </div>
           </div> 
+          <!-- Tab links -->
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <button id="regleTab" class="nav-link active" onclick="switchTab(this)">Règles</button>
+            </li>
+            <li class="nav-item">
+              <button id="shopTab" class="nav-link" onclick="switchTab(this)">Boutique</button>
+            </li>
 
-
-          <div class="row">
-            <h2 class="mt-5">Objectif:</h2>
-            <span>L'objectif est de trouver un trésor caché sur la carte. Cependant, des monstres se cachent également sur la carte et vous devrez les affronter si vous les rencontrez. Si vous gagnez un combat, vos points de vie (PV) sont restaurés, en revanche, si vous perdez, la partie est finie. Bonne chance dans votre quête du trésor caché !
-            </span>
-            <p class="mt-3">Pour vous déplacez, cliquez sur les flèches directionnelles à l'écran.</p>
-          </div> 
+            <div id="shop" class="tabContent row border d-none py-1">
+                <?php if (isset($_SESSION['listeItem'])) : ?>
+                  <?php foreach ($_SESSION['listeItem'] as $item) : ?>
+                    <div class="col-sm-4">
+                      <div class="card" style="height:30vh;">
+                        <img src="<?php echo $item->getImage() ?>" class="card-img-top" style="height:100px;">
+                        <div class="card-body">
+                          <h5 class="card-title"><?php echo $item->getNom() ?></h5>
+                          <p class="card-text"><i class="fa-solid fa-heart" style="color: #ff0000;"></i> : <?php echo $item->getPointVie() ?></p>
+                          <p class="card-text"><i class="fa-solid fa-hand-fist" style="color: #382e2e;"></i> : <?php echo $item->getForce() ?></p>
+                          <button class="btn btn-success">Acheter</button>
+                        </div>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+            </div> 
+            <div id="regle" class="tabContent container row border">
+              <h2 class="mt-5">Objectif:</h2>
+              <ul class="text-start ms-5">
+                <li>Trouver le trésor caché sur la carte</li>
+                <li>Ne pas mourir</li>
+              </ul>
+              <h2 class="mt-5">Instructions:</h2>
+              <p>Pour vous déplacez, cliquez sur les flèches directionnelles à l'écran.</p>
+            </div> 
+          </ul>
         </div>
       </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/script.js"></script>
+    <script src="https://kit.fontawesome.com/8770a63ef6.js" crossorigin="anonymous"></script>
 </body>
