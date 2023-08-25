@@ -29,7 +29,8 @@
     <?php
 
         require_once 'logic.php';
-        var_dump($_SESSION['listeItem']);
+        var_dump($_SESSION['test']);
+        // var_dump($_SESSION['joueur']->getListItems());
     ?>
     
     <div class="container">
@@ -95,40 +96,45 @@
           </div> 
           <!-- Tab links -->
           <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <button id="regleTab" class="nav-link active" onclick="switchTab(this)">Règles</button>
-            </li>
-            <li class="nav-item">
-              <button id="shopTab" class="nav-link" onclick="switchTab(this)">Boutique</button>
-            </li>
-
-            <div id="shop" class="tabContent row border d-none py-1">
-                <?php if (isset($_SESSION['listeItem'])) : ?>
-                  <?php foreach ($_SESSION['listeItem'] as $item) : ?>
-                    <div class="col-sm-4">
-                      <div class="card" style="height:30vh;">
-                        <img src="<?php echo $item->getImage() ?>" class="card-img-top" style="height:100px;">
-                        <div class="card-body">
-                          <h5 class="card-title"><?php echo $item->getNom() ?></h5>
-                          <p class="card-text"><i class="fa-solid fa-heart" style="color: #ff0000;"></i> : <?php echo $item->getPointVie() ?></p>
-                          <p class="card-text"><i class="fa-solid fa-hand-fist" style="color: #382e2e;"></i> : <?php echo $item->getForce() ?></p>
-                          <button class="btn btn-success">Acheter</button>
-                        </div>
-                      </div>
-                    </div>
-                  <?php endforeach; ?>
-                <?php endif; ?>
-            </div> 
-            <div id="regle" class="tabContent container row border">
-              <h2 class="mt-5">Objectif:</h2>
-              <ul class="text-start ms-5">
-                <li>Trouver le trésor caché sur la carte</li>
-                <li>Ne pas mourir</li>
-              </ul>
-              <h2 class="mt-5">Instructions:</h2>
-              <p>Pour vous déplacez, cliquez sur les flèches directionnelles à l'écran.</p>
-            </div> 
+            <div class="row">
+              <li class="nav-item col-4">
+                <button id="regleTab" class="nav-link active" onclick="switchTab(this)">Règles</button>
+              </li>
+              <li class="nav-item col-4">
+                <button id="shopTab" class="nav-link" onclick="switchTab(this)">Boutique</button>
+              </li>
+              <li class="col-4 mt-2">
+                <p class="card-text"><i class="fa-solid fa-coins" style="color: #FFD700;"></i> : <?php echo isset($_SESSION['joueur']) ? $_SESSION['joueur']->getPocheOr() : "" ?></p>
+              </li>
+            </div>
           </ul>
+          <div id="shop" class="tabContent row border d-none py-1">
+            <?php if (isset($_SESSION['listeItem'])) : ?>
+              <?php foreach ($_SESSION['listeItem'] as $item) : ?>
+                <div class="col-sm-4 px-1">
+                  <div class="card" style="height:35vh;">
+                    <img src="<?php echo $item->getImage() ?>" class="card-img-top" style="height:100px;">
+                    <div class="card-body">
+                      <p class="card-title"><?php echo $item->getNom() ?></p>
+                      <p class="card-text"><i class="fa-solid fa-heart" style="color: #ff0000;"></i> : <?php echo $item->getPointVie() ?></p>
+                      <p class="card-text"><i class="fa-solid fa-hand-fist" style="color: #382e2e;"></i> : <?php echo $item->getForce() ?></p>
+                      <p class="card-text"><i class="fa-solid fa-coins" style="color: #FFD700;"></i> : <?php echo $item->getPrix() ?></p>
+                      <button class="btn btn-success" onclick="buyItem('<?php echo $item->getNom() ?>')">Acheter</button>
+                    </div>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </div> 
+          <div id="regle" class="tabContent container row border">
+            <h2 class="mt-5">Objectif:</h2>
+            <ul class="text-start ms-5">
+              <li>Trouver le trésor caché sur la carte</li>
+              <li>Ne pas mourir</li>
+            </ul>
+            <h2 class="mt-5">Instructions:</h2>
+            <p>Pour vous déplacez, cliquez sur les flèches directionnelles à l'écran.</p>
+          </div> 
         </div>
       </div>
     </div>

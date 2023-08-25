@@ -29,6 +29,22 @@ function deplacerJoueur(direction) {
 }
 
 /**
+ * Le joueur achète un item
+ * 
+ * @param nomItem 
+ */
+function buyItem(nomItem) {
+
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "logic.php?function=acheteItem&nomItem=" + nomItem, true);
+    xmlHttp.send();
+
+    // rafraichir la page après la requête (NECESSAIRE)
+    location.reload();
+
+}
+
+/**
  * Change d'onglet
  */
 function switchTab(pOnglet) {

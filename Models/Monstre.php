@@ -18,7 +18,7 @@
             
 			parent::__construct($pPointVie, $pForce);
             $this->type = self::$monstreType[rand(0, 6)];
-            $this->or = rand(0, 6);
+            $this->or = rand(0, 10);
         }
 
         /**

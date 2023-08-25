@@ -12,6 +12,9 @@
         if (isset($_GET['direction'])) {
             // cas où il s'agit d'un déplacement du joueur
             call_user_func($_GET['function'], $_GET['direction']);
+        } else if (isset($_GET['nomItem'])) {
+            // cas où il s'agit d'un achat d'item du joueur
+            call_user_func($_GET['function'], $_GET['nomItem']);
         } else {
             // cas d'un lancement d'une partie
             call_user_func($_GET['function']);
@@ -29,6 +32,7 @@
             unset($_SESSION['map']);
             unset($_SESSION['joueur']);
             unset($_SESSION['informations']);
+            unset($_SESSION['listeItem']);
         }
 
         // Créer la carte
@@ -50,7 +54,9 @@
         // Affecte la position du joueur
         $joueur->setPosition($playerPos);
 
-        $_SESSION['listeItem'] = (new Boutique(3))->getListItems();
+        $_SESSION['boutique'] = new Boutique();
+        $_SESSION['boutique']->generateItems(3);
+        $_SESSION['listeItem'] = $_SESSION['boutique']->getListItems();
         $_SESSION['map'] = $map;
         $_SESSION['joueur'] = $joueur;
         $_SESSION['informations'] = "<p>Début de la chasse !!<br>Vous vous trouvez en [".$playerPos['x'].", ".$playerPos['y']."].</p>";
@@ -117,7 +123,8 @@
                 // cas où le joueur s'est déplacé
 
                 $joueurPosition = $_SESSION['joueur']->getPosition();
-                $joueurNiveau = $_SESSION['joueur']->getNiveau();
+                $joueurVie = $_SESSION['joueur']->getPointVie();
+                $joueurForce = $_SESSION['joueur']->getForce();
         
                 if($joueurPosition == $_SESSION['map']->getTreasurePosition()) {
                     $_SESSION['joueur']->setPocheOr($_SESSION['joueur']->getPocheOr() + 50);
@@ -130,7 +137,7 @@
                     $nouvelleInformations .= "<p>Vous avez avancé. Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].</p>";
                 } else { 
                     // cas où le joueur est sur la case d'un monstre
-                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(5 + $joueurNiveau, 10 + $joueurNiveau), rand(3 + $joueurNiveau, 8 + $joueurNiveau)));
+                    $resultatCombat = $_SESSION['joueur']->combattreMonstre(new Monstre(rand(10, 25)*$joueurForce/10, rand(2 , 5)*$joueurVie/10));
 
                     switch (round($_SESSION['joueur']->getPourcentXp()/20)) {
                         case 1:
@@ -161,11 +168,62 @@
                         $nouvelleInformations .= "<p>Vous vous trouvez en [".$joueurPosition['x'].", ".$joueurPosition['y']."].</p>";
                     }
                 }
+
+                $_SESSION['boutique']->generateItems();
+                $_SESSION['listeItem'] = $_SESSION['boutique']->getListItems();
             }
             $nouvelleInformations .= "<p>---------------------------------------</p>";
         }
         $_SESSION['informations'] = $nouvelleInformations.$_SESSION['informations'];
 
+    }
+
+    /**
+     * Achète un item
+     * 
+     * @param string
+     */
+    function acheteItem(string $pNomItem) {
+
+        $resultat = "";
+
+        $itemSelec = $_SESSION['listeItem'][$pNomItem];
+        $orJoueur = $_SESSION['joueur']->getPocheOr();
+        $prixItem = $itemSelec->getPrix();
+
+        if ($orJoueur >= $prixItem) {
+            // le joueur achète l'item
+            $listItemJoueur = $_SESSION['joueur']->getListItems();
+            array_push($listItemJoueur, $itemSelec);
+            $_SESSION['joueur']->setListItems($listItemJoueur);
+    
+            // Le nom de l'item est retiré de la table des noms
+            $listItemNames = $_SESSION['boutique']->getListItemNames();
+            $indexItem = array_search($pNomItem, $listItemNames);
+            array_splice($listItemNames, $indexItem, 1);
+            $_SESSION['boutique']->setListItemNames($listItemNames);
+    
+            // L'image' de l'item est retiré de la table des images
+            $listItemImg = $_SESSION['boutique']->getListItemImg();
+            array_splice($listItemImg, $indexItem, 1);
+            $_SESSION['boutique']->setListItemImg($listItemImg);
+    
+            // génére un nouveau lot d'items dans la boutique
+            $_SESSION['boutique']->generateItems();
+            $_SESSION['listeItem'] = $_SESSION['boutique']->getListItems();
+
+            $_SESSION['joueur']->setForce($_SESSION['joueur']->getForce() + $itemSelec->getForce());
+            $_SESSION['joueur']->setPointVie($_SESSION['joueur']->getPointVie() + $itemSelec->getPointVie());
+            $_SESSION['joueur']->setMaxVie($_SESSION['joueur']->getMaxVie() + $itemSelec->getPointVie());
+            $_SESSION['joueur']->setPocheOr($orJoueur - $prixItem);
+
+            $resultat .= "<p class='text-success'>Félicitation !! Vous venez d'acheté ".$pNomItem." !!</p>";
+        } else {
+            $resultat .= "<p class='text-danger'>Désolé !! Vous ne possédez pas assez d'or pour acheter ".$pNomItem." !!</p>";
+        }
+        $resultat .= "<p>---------------------------------------</p>";
+
+        $_SESSION['informations'] = $resultat.$_SESSION['informations'];
     }
     
 ?>

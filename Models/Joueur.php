@@ -30,6 +30,11 @@
 		 */ 
         protected int $pourcentXp;
 
+		/**
+         * La liste d'items possédés 
+		 */ 
+        protected array $listItems;
+
         // Les points de vie de base
         const VIE = 10;
 
@@ -47,6 +52,7 @@
             $this->niveau = 1;
             $this->pourcentXp = 0;
             $this->pocheOr = 0;
+            $this->listItems = array();
         }
 
         /**
@@ -144,6 +150,25 @@
             $this->pourcentXp = $pPourcentXp;
         }
 
+        /**
+		 * @return array
+         * 
+         * Retourne la liste d'items
+		 */ 
+        public function getListItems(): array {
+            return $this->listItems;
+        }
+
+		/**
+		 * @param array
+		 * @return void
+         * 
+         * Modifie la liste d'items
+		 */ 
+        public function setListItems(array $pListItems) {
+            $this->listItems = $pListItems;
+        }
+
 		/**
 		 * @param int
 		 * @return void
@@ -232,6 +257,21 @@
                 while ($this->pointVie > 0 && $pMonstre->getPointVie() > 0) {
                     // Le monstre subi un coup du joueur
                     $resultat .= $pMonstre->prendUnCoup($this->force);
+                    foreach ($this->listItems as $item) {
+                        $randomValue = rand(1, 10);
+                        if ($item->getNom() === "Doomhammer" && $randomValue == 1) {
+                            $resultat .= "<p>Grâce au pouvoir du Doomhammer, vous attaquez une seconde fois !!</p>";
+                            // Le monstre subi un coup supplémentaire du joueur
+                            $resultat .= $pMonstre->prendUnCoup($this->force);
+                            break;
+                        }
+                        if ($item->getNom() === "Ashbringer" && $randomValue > 1 && $randomValue < 4) {
+                            $resultat .= "<p>La chaleur intense de Ashbringer brûle votre ennemi !!</p>";
+                            // Le monstre subi un coup supplémentaire du joueur
+                            $resultat .= $pMonstre->prendUnCoup($this->force/2);
+                            break;
+                        }
+                    }
                     if ($pMonstre->getPointVie() > 0) {
                         // Cas où le monstre survit au coup du joueur
                         // Le joueur subi un coup du monstre

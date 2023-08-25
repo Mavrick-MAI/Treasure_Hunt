@@ -2,9 +2,6 @@
 
     class Item {
 
-        static private $itemNames = array("Glaive d'Illidan", "Crochet du Boucher", "Ashbringer", "Frostmourne", "Doomhammer");
-        static private $itemImg = array("img/illidan_glaives.jpg", "img/butcher_sickle.png", "img/ashbringer.jpg", "img/frostmourne.jpg", "img/doomhammer.jpg");
-
 		/**
          * Le nom
 		 */ 
@@ -33,16 +30,14 @@
 		/**
 		 * @return Item
 		 */ 
-        public function __construct() {
+        public function __construct($pNom, $pImg) {
 
             $randomValue = rand(0, 4);
-            $this->nom = self::$itemNames[$randomValue];
-            $this->image = self::$itemImg[$randomValue];
+            $this->nom = $pNom;
+            $this->image = $pImg;
             $this->pointVie = rand(0, 2);
             $this->force = rand(1, 2);
             $this->prix = rand(3, 25);
-            unset(self::$itemNames[$randomValue]);
-            unset(self::$itemImg[$randomValue]);
             
         }
 
