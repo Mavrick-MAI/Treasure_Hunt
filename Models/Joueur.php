@@ -257,25 +257,35 @@
                 while ($this->pointVie > 0 && $pMonstre->getPointVie() > 0) {
                     // Le monstre subi un coup du joueur
                     $resultat .= $pMonstre->prendUnCoup($this->force);
+                    $randomValue = rand(1, 20);
+                    $procFrostmourne = false;
                     foreach ($this->listItems as $item) {
-                        $randomValue = rand(1, 10);
                         if ($item->getNom() === "Doomhammer" && $randomValue == 1) {
+                            // proc de Doomhammer
                             $resultat .= "<p>Grâce au pouvoir du Doomhammer, vous attaquez une seconde fois !!</p>";
                             // Le monstre subi un coup supplémentaire du joueur
                             $resultat .= $pMonstre->prendUnCoup($this->force);
                             break;
                         }
-                        if ($item->getNom() === "Ashbringer" && $randomValue > 1 && $randomValue < 4) {
+                        if ($item->getNom() === "Ashbringer" && $randomValue >= 2 && $randomValue <= 3) {
+                            // proc de Ashbringer
                             $resultat .= "<p>La chaleur intense de Ashbringer brûle votre ennemi !!</p>";
                             // Le monstre subi un coup supplémentaire du joueur
                             $resultat .= $pMonstre->prendUnCoup($this->force/2);
                             break;
                         }
+                        if ($item->getNom() === "Frostmourne" && $randomValue == 4) {
+                            // proc de Frostmourne
+                            $resultat .= "<p>Frostmourne gèle votre ennemi jusqu'aux os l'empêchant d'attaquer !!</p>";
+                            $procFrostmourne = true;   
+                        }
                     }
-                    if ($pMonstre->getPointVie() > 0) {
-                        // Cas où le monstre survit au coup du joueur
-                        // Le joueur subi un coup du monstre
-                        $resultat .= $this->prendUnCoup($pMonstre->getForce());
+                    if ($pMonstre->getPointVie() > 0) { 
+                        if (!$procFrostmourne) {
+                            // Cas où le monstre survit au coup du joueur
+                            // Le joueur subi un coup du monstre
+                            $resultat .= $this->prendUnCoup($pMonstre->getForce());
+                        }
                     }
                 }
                 // Résultat du combat
